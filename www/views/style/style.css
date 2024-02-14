@@ -1,0 +1,26 @@
+a.btn.action {
+    color: white;
+}
+
+a.btn.action:hover {
+    color: white;
+    font-weight: bolder;
+}
+
+#posts.table thead th:last-child,
+#posts.table thead th:nth-child(4) {
+    width: 15%;
+}
+
+#categories.table thead th:nth-child(2) {
+    width: 55%;
+}
+
+#posts.table tbody tr td:last-child a.btn.action,
+#categories.table tbody tr td:last-child a.btn.action {
+    margin-top: .1em;
+}
+
+
+
+
