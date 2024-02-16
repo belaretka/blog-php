@@ -2,14 +2,12 @@
 
 namespace App\repos;
 
+use App\config\Config;
 use App\model\DTO\CategoryDTO;
 
 class CategoryRepository implements IRepository
 {
     public $connection;
-
-    const TABLE = 'categories';
-    const PIVOT = 'category_post';
 
     public function __construct()
     {
@@ -17,7 +15,7 @@ class CategoryRepository implements IRepository
     }
 
     public function count() {
-        $sql = 'SELECT COUNT(*) AS count FROM ' . self::TABLE;
+        $sql = 'SELECT COUNT(*) AS count FROM ' . Config::$CATEGORIES;
 
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
@@ -31,7 +29,7 @@ class CategoryRepository implements IRepository
 
     public function selectAll(): bool|array
     {
-        $sql = 'SELECT id, name FROM ' . self::TABLE;
+        $sql = 'SELECT id, name FROM ' . Config::$CATEGORIES;
 
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
@@ -41,7 +39,7 @@ class CategoryRepository implements IRepository
 
     public function selectById(int $toSelect)
     {
-        $sql = 'SELECT id, name FROM ' . self::TABLE . ' WHERE id = :entity_id';
+        $sql = 'SELECT id, name FROM ' . Config::$CATEGORIES . ' WHERE id = :entity_id';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':entity_id', $toSelect);
@@ -52,7 +50,7 @@ class CategoryRepository implements IRepository
 
     public function deleteById(int $toDelete)
     {
-        $sql = 'DELETE FROM ' . self::TABLE  . ' WHERE id = :entity_id;';
+        $sql = 'DELETE FROM ' . Config::$CATEGORIES  . ' WHERE id = :entity_id;';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':entity_id', $toDelete);
@@ -63,7 +61,7 @@ class CategoryRepository implements IRepository
     public function insert(mixed $toInsert): void {
         $toInsert->setId($this->selectAvailableId());
 
-        $sql = 'INSERT INTO ' . self::TABLE . ' (id, name) VALUES (:id, :name);';
+        $sql = 'INSERT INTO ' . Config::$CATEGORIES . ' (id, name) VALUES (:id, :name);';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':id', $toInsert->getId());
@@ -73,7 +71,7 @@ class CategoryRepository implements IRepository
     }
 
     public function update(mixed $toUpdate) {
-        $sql = 'UPDATE ' . self::TABLE . ' SET name = :name WHERE id = :id';
+        $sql = 'UPDATE ' . Config::$CATEGORIES . ' SET name = :name WHERE id = :id';
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':name', $toUpdate->getName());
         $stmt->bindValue(':id', $toUpdate->getId());

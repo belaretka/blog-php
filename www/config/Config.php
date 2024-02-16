@@ -14,6 +14,9 @@ class Config
     public static $HOST;
     public static $DB_NAME;
     public static $CHARSET;
+    public static $PIVOT;
+    public static $CATEGORIES;
+    public static $POSTS;
 
     public static function load(): void
     {

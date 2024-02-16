@@ -2,14 +2,12 @@
 
 namespace App\repos;
 
+use App\config\Config;
 use App\model\DTO\PostDTO;
 
 class PostRepository implements IRepository
 {
     public $connection;
-
-    const TABLE = 'posts';
-    const PIVOT = 'category_post';
 
     public function __construct()
     {
@@ -18,7 +16,7 @@ class PostRepository implements IRepository
 
     public function count()
     {
-        $sql = 'SELECT COUNT(*) AS amount FROM ' . self::TABLE;
+        $sql = 'SELECT COUNT(*) AS amount FROM ' . Config::$POSTS;
 
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
@@ -35,7 +33,7 @@ class PostRepository implements IRepository
     {
         $post->setId($this->selectAvailableId());
 
-        $sql = 'INSERT INTO ' . self::TABLE . ' (id, created_at, title, content) VALUES (:id, :created_at, :title, :content);';
+        $sql = 'INSERT INTO ' . Config::$POSTS . ' (id, created_at, title, content) VALUES (:id, :created_at, :title, :content);';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':id', $post->getId());
@@ -49,8 +47,8 @@ class PostRepository implements IRepository
     public function selectAll(int $limit = null, int $offset = null)
     {
         $sql = isset($limit) && isset($offset) ?
-            'SELECT id, created_at, title, content FROM ' . self::TABLE . ' LIMIT :limit OFFSET :offset'
-            : 'SELECT id, created_at, title, content FROM ' . self::TABLE;
+            'SELECT id, created_at, title, content FROM ' . Config::$POSTS . ' LIMIT :limit OFFSET :offset'
+            : 'SELECT id, created_at, title, content FROM ' . Config::$POSTS;
 
         $stmt = $this->connection->prepare($sql);
         if (isset($limit) && isset($offset)) {
@@ -64,7 +62,7 @@ class PostRepository implements IRepository
 
     public function selectById(int $toSelect)
     {
-        $sql = 'SELECT id, created_at, title, content FROM ' . self::TABLE . ' WHERE id = :entity_id';
+        $sql = 'SELECT id, created_at, title, content FROM ' . Config::$POSTS . ' WHERE id = :entity_id';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':entity_id', $toSelect);
@@ -75,7 +73,7 @@ class PostRepository implements IRepository
 
     public function deleteById(int $toDelete)
     {
-        $sql = 'DELETE FROM ' . self::TABLE . ' WHERE id = :entity_id;';
+        $sql = 'DELETE FROM ' . Config::$POSTS . ' WHERE id = :entity_id;';
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':entity_id', $toDelete);
         $stmt->execute();
@@ -83,7 +81,7 @@ class PostRepository implements IRepository
 
     public function update(mixed $post)
     {
-        $sql = 'UPDATE ' . self::TABLE . ' SET title = :title, created_at = :created_at, content = :content WHERE id = :id';
+        $sql = 'UPDATE ' . Config::$POSTS . ' SET title = :title, created_at = :created_at, content = :content WHERE id = :id';
 
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':title', $post->getTitle());

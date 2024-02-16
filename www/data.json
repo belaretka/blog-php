@@ -4,5 +4,8 @@
   "PASSWORD": "root",
   "HOST": "mysql",
   "DB_NAME": "db",
-  "CHARSET": "utf8"
+  "CHARSET": "utf8",
+  "PIVOT": "category_post",
+  "POSTS": "posts",
+  "CATEGORIES": "categories"
 }
