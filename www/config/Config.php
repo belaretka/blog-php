@@ -2,6 +2,8 @@
 
 namespace App\config;
 
+use App\services\parser\JsonParser;
+
 class Config
 {
     const filename = "data.json";
