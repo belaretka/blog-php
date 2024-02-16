@@ -2,32 +2,59 @@
 
 namespace App\services;
 
+use App\model\DTO\CategoryDTO;
 use App\repos\CategoryRepository;
 use App\repos\IRepository;
+use App\repos\PivotRepository;
 
 class CategoryService implements IService
 {
-    public IRepository $categories;
+    public IRepository $category_repo;
+    public PivotRepository $pivot_repo;
 
     public function __construct()
     {
-        $this->categories = new CategoryRepository();
+        $this->category_repo = new CategoryRepository();
+        $this->pivot_repo = new PivotRepository();
     }
 
-    public function getAllEntities(): bool|array
+    public function getAll(): bool|array
     {
-        return $this->categories->selectAll();
+        return $this->category_repo->selectAll();
     }
 
-    public function getEntity(int $entity_id)
+    public function getInstance(int $instance_id)
     {
-        return $this->categories->selectById($entity_id);
+        $category = new CategoryDTO();
+
+        $category->setDTO($this->category_repo->selectById($instance_id));
+        $category->setPosts($this->pivot_repo->selectPostsByCategoryId($instance_id));
+
+        return $category;
     }
 
-    public function removeEntity(int $entity_id)
+    public function removeInstance(int $instance_id)
     {
-        $this->categories->deleteById($entity_id);
+        $this->pivot_repo->deleteByCategoryId($instance_id);
+        $this->category_repo->deleteById($instance_id);
     }
 
+    public function saveInstance(mixed $category)
+    {
+        $this->category_repo->insert($category);
+        if($category->getPosts() !== null) {
+            foreach ($category->getPosts() as $post) {
+                $this->pivot_repo->insert($category->getId(), $post);
+            }
+        }
+    }
 
+    public function updateInstance(mixed $category)
+    {
+        $this->pivot_repo->deleteByCategoryId($category->getId());
+        $this->category_repo->update($category);
+        foreach ($category->getPosts() as $post) {
+            $this->pivot_repo->insert($post, $category->getId());
+        }
+    }
 }

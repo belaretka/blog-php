@@ -4,12 +4,12 @@ namespace App\model;
 
 class Post
 {
-    private int $id;
-    private string $title;
-    private string $content;
-    private string $created_at;
+    private $id;
+    private $title;
+    private $content;
+    private $created_at;
 
-    public function __construct($id, $title, $content, $created_at)
+    public function __construct($id = null, $title = null, $content = null, $created_at = null)
     {
         $this->id = $id;
         $this->title = $title;

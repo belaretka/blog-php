@@ -2,32 +2,70 @@
 
 namespace App\services;
 
+use App\model\DTO\PostDTO;
+use App\repos\PivotRepository;
 use App\repos\PostRepository;
 use App\repos\IRepository;
 
 class PostService implements IService
 {
-    public IRepository $posts;
+    public IRepository $post_repo;
+    public PivotRepository $pivot_repo;
 
     public function __construct()
     {
-        $this->posts = new PostRepository();
+        $this->post_repo = new PostRepository();
+        $this->pivot_repo = new PivotRepository();
     }
 
-    public function getAllEntities(): bool|array
+    public function getAll(): bool|array
     {
-        return $this->posts->selectAll();
+        return $this->post_repo->selectAll();
     }
 
-    public function getEntity(int $entity_id)
+    public function getPostsPerPage(int $page, int $postsPerPage)
     {
-       return $this->posts->selectById($entity_id);
+        $limit = $postsPerPage;
+        $offset = $postsPerPage * ($page - 1);
+
+        return $this->post_repo->selectAll($limit, $offset);
     }
 
-    public function removeEntity(int $entity_id)
+    public function countPosts()
     {
-        $this->posts->deleteById($entity_id);
+        return $this->post_repo->count();
     }
 
+    public function getInstance(int $instance_id): PostDTO
+    {
+        $post = new PostDTO();
+        $post->setDTO($this->post_repo->selectById($instance_id));
+        $post->setCategories($this->pivot_repo->selectCategoriesByPostId($instance_id));
+        return $post;
+    }
 
+    public function removeInstance(int $id)
+    {
+        $this->pivot_repo->deleteByPostId($id);
+        $this->post_repo->deleteById($id);
+    }
+
+    public function saveInstance(mixed $post)
+    {
+        $this->post_repo->insert($post);
+        if($post->getCategories() !== null) {
+            foreach ($post->getCategories() as $category) {
+                $this->pivot_repo->insert($post->getId(), $category);
+            }
+        }
+    }
+
+    public function updateInstance(mixed $post)
+    {
+        $this->pivot_repo->deleteByPostId($post->getId());
+        $this->post_repo->update($post);
+        foreach ($post->getCategories() as $category) {
+            $this->pivot_repo->insert($post->getId(), $category);
+        }
+    }
 }

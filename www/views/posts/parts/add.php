@@ -1,23 +1,24 @@
 <div class="card-body">
-    <form >
+    <form method="POST" action="/?resource=posts&action=save">
         <div class="form-group">
             <h3>Post title</h3>
-            <input type="text" class="form-control" placeholder="Post Title">
+            <input type="text" class="form-control" placeholder="Post Title" id="title" name="title">
         </div>
         <div class="form-group">
             <h3>Categories</h3>
-            <select multiple class="form-control" id="categories">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+            <select multiple class="" id="categories" name="categories[]">
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= $category->getId(); ?>">
+                        <?= $category->getName(); ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
         </div>
         <div class="form-group">
             <h3>Post Content</h3>
-            <textarea class="form-control" id="content" rows="5" placeholder="Add content"></textarea>
+            <textarea class="form-control" id="content" name="content" rows="15" placeholder="Add content"></textarea>
         </div>
-        <a href="<?= 'http://'.$_SERVER["SERVER_NAME"].'/?resource=posts&action=save'?>" type="submit" class="btn btn-primary btn-block">Submit</a>
+        <button type="submit" name="submit" value="submit" class="btn btn-primary btn-block">Submit</button>
     </form>
 </div>
+

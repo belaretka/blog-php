@@ -2,32 +2,53 @@
 
 namespace App\model\DTO;
 
-class CategoryDTO implements \JsonSerializable
+class CategoryDTO
 {
     private $id;
     private $name;
+    private $posts;
 
-    public function __construct($id = null, $name = null)
+    public function __construct($id = null, $name = null, $posts = null)
     {
         $this->id = $id;
         $this->name = $name;
+        $this->posts = $posts;
     }
 
-    public function jsonSerialize() : mixed
+    public function setDTO($obj): void
     {
-        return [
-            "id" => $this->id,
-            "name" => $this->name
-        ];
+        $this->id = $obj->id;
+        $this->name = $obj->name;
     }
 
-    public function getId()
+    public function setId(mixed $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+    public function setPosts(array $posts): void
+    {
+        $this->posts = $posts;
+    }
 }
+

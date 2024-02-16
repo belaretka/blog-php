@@ -4,10 +4,10 @@ namespace App\model;
 
 class Category
 {
-    private int $id;
-    private string $name;
+    private $id;
+    private $name;
 
-    public function __construct($id, $name)
+    public function __construct($id = null, $name = null)
     {
         $this->id = $id;
         $this->name = $name;

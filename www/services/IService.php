@@ -4,8 +4,9 @@ namespace App\services;
 
 interface IService
 {
-    public function getEntity(int $entity_id);
-    public function getAllEntities();
-//    public function createEntity(mixed $entity);
-    public function removeEntity(int $entity_id);
+    public function getInstance(int $instance_id);
+    public function getAll();
+    public function saveInstance(mixed $instance);
+    public function removeInstance(int $instance_id);
+    public function updateInstance(mixed $instance);
 }

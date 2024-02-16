@@ -2,81 +2,127 @@
 
 namespace App\controller;
 
+use App\model\DTO\PostDTO;
+use App\services\CategoryService;
 use App\services\IService;
 use App\services\PostService;
 
-class PostController extends BaseController
+class PostController extends BaseController implements IResourceController
 {
-    public IService $postsService;
+    const PAGINATION = 5;
+
+    public IService $postService;
+    public IService $categoryService;
 
     public function __construct()
     {
-        $this->postsService = new PostService();
+        $this->postService = new PostService();
+        $this->categoryService = new CategoryService();
     }
 
     public function handleRequest(): void
     {
         $operation = $_GET['action'] ?? null;
-        $id = $_GET['id'] ?? null;
+        $post_id = $_GET['id'] ?? null;
+        $page = $_GET['page'] ?? 1;
 
-        switch ($operation){
+        switch ($operation) {
             case null:
             case 'show':
-                $this->show(); break;
+                $this->display($page);
+                break;
             case 'add':
-                $this->add(); break;
+                $this->create();
+                break;
             case 'remove':
-                $this->remove($id); break;
+                $this->remove($post_id);
+                break;
             case 'get':
-                $this->get($id);break;
+                $this->get($post_id);
+                break;
             case 'edit':
-                $this->edit($id); break;
+                $this->edit($post_id);
+                break;
             case 'save':
-                $this->show(); break;
+                $this->save();
+                break;
+            case 'update':
+                $this->update($post_id);
+                break;
             default:
-                $this->showError("Wrong operation", "Page for operation '$operation' not found"); break;
+                $this->showError("Wrong operation", "Page for operation '$operation' not found");
+                break;
         }
     }
 
-    // Display a list of posts
-    public function show()
+    public function display(int $page)
     {
         $title = 'Posts';
-        $posts = $this->postsService->getAllEntities();
+        $postsAmount = $this->postService->countPosts();
+        $pagesAmount = ceil($postsAmount / self::PAGINATION);
+
+        $posts = $this->postService->getPostsPerPage($page, self::PAGINATION);
 
         include('views/posts/posts.php');
     }
 
-    // Add new post
-    public function add()
+    public function create()
     {
         $mode = 'add';
         $title = 'Add new post';
+
+        $categories = $this->categoryService->getAll();
+
         include('views/posts/post.php');
     }
 
-    // Edit a selected post
+    public function remove(int $id)
+    {
+        $this->postService->removeInstance($id);
+        $this->redirect("/?resource=posts");
+    }
+
+    public function get(int $id)
+    {
+        $post = $this->postService->getInstance($id);
+
+        $mode = 'get';
+        $title = $post->getTitle();
+
+        include('views/posts/post.php');
+    }
+
     public function edit(int $id)
     {
         $mode = 'edit';
         $title = 'Edit a post';
-        $post = $this->postsService->getEntity($id);
+
+        $post = $this->postService->getInstance($id);
+        $allCategories = $this->categoryService->getAll();
+
         include('views/posts/post.php');
     }
 
-    // Get a selected post
-    public function get(int $id)
+    public function save()
     {
-        $mode = 'read';
-        $title = '';
-        $post = $this->postsService->getEntity($id);
-        include('views/posts/post.php');
-    }
-
-    // Delete a selected post
-    public function remove(int $id)
-    {
-        $this->postsService->removeEntity($id);
+        $categories = $_POST['categories'] ?? null;
+        $this->postService->saveInstance(new PostDTO (
+            null,
+            date('y-m-d h:m:s', time()),
+            $_POST['title'],
+            $_POST['content'],
+            $categories));
         $this->redirect("/?resource=posts");
+    }
+
+    public function update(int $id)
+    {
+        $this->postService->updateInstance(new PostDTO(
+            $id,
+            $_POST['created_at'],
+            $_POST['title'],
+            $_POST['content'],
+            $_POST['categories']));
+        $this->redirect("/?resource=posts&id={$id}&action=get");
     }
 }

@@ -4,7 +4,6 @@ namespace App\controller;
 
 class BaseController implements IController
 {
-
     public function showError(string $title = 'Error', string $message = 'Not Found'): void
     {
         include('views/error.php');
@@ -15,20 +14,13 @@ class BaseController implements IController
         header('Location: ' . $location);
     }
 
-    public function getUri()
-    {
-        $uri = parse_url($_SERVER['REQUEST_URI'],);
-        return $uri;
-    }
-
     public function handleRequest(): void
     {
-        $resource = $_REQUEST['resource'] ?? 'start';
+        $resource = $_REQUEST['resource'] ?? null;
 
         switch ($resource) {
-            case 'start':
-                $title = 'Blog';
-                include('views/start-menu.php');
+            case null:
+                $this->getStartPage();
                 break;
             case 'posts':
                 $controller = new PostController();
@@ -42,5 +34,11 @@ class BaseController implements IController
                 $this->showError("Wrong resource", "Page for resource '$resource' not found");
                 break;
         }
+    }
+
+    protected function getStartPage()
+    {
+        $title = 'Blog';
+        include('views/start-menu.php');
     }
 }
