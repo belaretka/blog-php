@@ -9,9 +9,8 @@ class Database
     public static function connect() {
         if(self::$conn == null) {
             try {
-//                self::$conn = new \PDO( Config::$DB_DRIVER . ':host=' . Config::$HOST . ';dbname=' . Config::$DB_NAME . ';charset=' . Config::$CHARSET,
-//                    Config::$USER, Config::$PASSWORD);
-                self::$conn = new \PDO( 'mysql:host=mysql;dbname=db;charset=utf8', 'root', 'root');
+                self::$conn = new \PDO( Config::$DB_DRIVER . ':host=' . Config::$HOST . ';dbname=' . Config::$DB_NAME . ';charset=' . Config::$CHARSET,
+                    Config::$USER, Config::$PASSWORD);
                 self::$conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             } catch (\PDOException $e) {
                 die('Connection Error: ' . $e->getMessage());
