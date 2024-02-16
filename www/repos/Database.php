@@ -2,6 +2,8 @@
 
 namespace App\repos;
 
+use App\config\Config;
+
 class Database
 {
     private static $conn = null;
